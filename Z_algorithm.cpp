@@ -26,7 +26,10 @@ using namespace __gnu_pbds;
 #define rep(i,a,b) for(int i=a;i<b;i++)
 #define memo(a) memset( a, 0 ,sizeof ( a) )
 
-
+template  < class  T >
+vector< T > readvector  ( T  n ) {  vector < T > arr(n ) ;
+	    for( int  i =0; i < n ; i ++ ) cin>>arr[i] ;
+		return arr; }
 
 
 ll gcd(ll a,ll b) { return b?gcd(b,a%b):a;}
@@ -94,8 +97,49 @@ const int maxx = 2e5+26;
 
 
 int Main(){
-  
-  
+	
+	
+string s;
+cin>>s;
+
+string t ;
+cin>>t;
+int  n = s.length (), m = t.length (); 
+string temp = t + ' '  + s ;
+
+vector < int > z (n+m+2,0) ;
+
+for( int i=1 ;i < n+m; i ++) {
+	
+	int ii =i , jj = 0 ;
+		
+	while( temp[ii] == temp[ jj] )
+	{
+		jj++;
+	    ii  ++;
+	    
+	}
+	ii =0; 
+	z[ i ]= jj ;
+	for( int j = i+1;j  <i+jj  ; j++){
+		z[ j] = z[ ii] ;
+		ii++;
+		
+	}
+	
+	
+}   
+	
+	
+	int cnt =0 ;
+	for( auto it : z) {
+		if( it == m )
+		cnt++;
+		cout<<it << " " ;
+	}
+	cout<<endl;
+	cout<<" TOTAL SUBSTRING :: "<<cnt<<endl;
+	
   
   
 return 0;
