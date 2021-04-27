@@ -1,0 +1,361 @@
+#include<bits/stdc++.h>
+#include <ext/pb_ds/assoc_container.hpp> // Common file
+#include <ext/pb_ds/tree_policy.hpp> // Including tree_order_statistics_node_update
+#include <ext/pb_ds/detail/standard_policies.hpp>
+
+// Picasso didn't learn to paint by watching lectures
+
+
+
+
+/* 
+*    coder :: ATUL_PANDEY_2608
+*        >>> INDIA <<<
+*/
+
+ 
+using namespace std;
+using namespace __gnu_pbds;
+
+// #define  part ..
+#define ook order_of_key
+#define fbo find_by_order 
+#define pb(a) push_back(a)
+#define all(a) a.begin(),a.end() 
+#define mod 1000000007
+#define tot_time cerr << "Runtime is: " << clock() * 1.0 / CLOCKS_PER_SEC << endl;
+//#define maxx 200006
+#define fixed cout<<fixed<<setprecision(14);
+#define ll long long 
+#define quick    ios_base::sync_with_stdio(NULL),cin.tie(0);
+#define listll vector< long long > 
+#define listi vector< int> 
+#define pii   pair<int , int> 
+#define pll pair<long long , long long > 
+#define minheap priority_queue<long long , vector< long long >, greater<long long > >
+#define rep(i,a,b) for(int i=a;i<b;i++)
+#define memo(a,x ) memset( a, x ,sizeof ( a) )
+#define randoms mt19937 rng(26);
+
+const long long oo = 1e18;
+double PI = 3.14159265358979323846; 
+
+
+template  < class  T >
+vector< T > readvector  ( T  n ) {  vector < T > arr(n ) ;
+	    for( int  i =0; i < n ; i ++ ) cin>>arr[i] ;
+		return arr; }
+
+
+ll gcd(ll a,ll b) { return b?gcd(b,a%b):a;}
+
+ll power( ll a, ll n, ll m= 1000000007){
+  ll ans = 1;
+  while(n){
+  if(n&1)
+  {
+  ans *= a;
+  ans%=m;
+  }
+  a*=a;
+  a%=m;
+  n/=2;
+  }
+  return ans ;
+} 
+
+
+vector< int > prm ;
+vector < bool > vsp ;
+
+void prime ( int nn = 100000 ) {
+	vsp = vector < bool > ( nn+1, 0 );
+	int size_prime = nn;
+	for( ll i =2; i*i < size_prime ; i++){
+		
+		if( vsp[i] == 1)
+		continue;
+		for(ll j = i*i; j < size_prime ;j+=i){
+			
+			vsp[j] =1;
+			
+		}
+		
+		
+	}
+	
+	for( int i= 2; i < size_prime ; i++)
+	if (vsp[i] == 0)
+	prm.pb(i);
+	
+	
+}
+
+
+//auto comparator = [] ( array < ll ,2 >  &a  , array < ll , 2  > &b ) {  return ( a[0] < b[0 ] || (a[ 0] == b[ 0] && a[1]  > b[1] ) ) ; } ; 
+
+//priority_queue< array <  ll  , 2> , vector< array< ll ,2 > > , decltype( comparator )  > pq ( comparator);
+
+
+
+
+
+
+
+template < class T > using oset = tree< T , null_type, less  < T  > , rb_tree_tag , tree_order_statistics_node_update > ;
+// oset< int > tree ; 
+// tree.ook ( val  )  return index of element ;
+// tree.fbo ( idx )   return pointer at the element .
+
+
+
+
+// end of #define 
+
+// define globals ...
+const int maxx = 2e5+26;
+
+//write function from here ...
+// never forget  to recheck your predefined function in template .. 
+// already defined ::  prime , power , gcd : ( ll ).. 
+
+
+
+
+struct point //Replace double with int if not required
+{
+	double x, y;
+
+	point () {}
+
+	point(int x, int y) : x(x), y(y) {}
+
+	void operator =(const point &p)
+	{
+		x=p.x, y=p.y;
+	}
+
+	bool operator <(const point&p)
+	{
+		if(x==p.x)
+			return y<p.y;
+		return x<p.x;
+	}
+
+	point operator +(const point&p) const
+	{
+		point pt(x + p.x, y + p.y);
+		return pt;
+	}
+
+	point operator -(const point&p) const
+	{
+		point pt(x - p.x, y - p.y);
+		return pt;
+	}
+
+	double crossProduct(const point &p) const
+	{	
+		return x * p.y - y * p.x;
+	}	
+
+	int dotProduct(const point &p) const
+	{
+		return x * p.x + y * p.y;
+	}
+
+	double dist()
+	{
+		return x*x + y*y;
+	}
+};
+
+
+bool comp(point &p1, point &p2)
+{
+	if(p1.x!=p2.x)
+		return p1.x<p2.x;
+	return p1.y<p2.y;
+}
+
+bool cw(point &a, point &b, point &c)
+{
+	int area=a.x*(b.y-c.y) + b.x*(c.y-a.y) + c.x*(a.y-b.y);
+	return area<0;
+}
+
+bool ccw(point &a, point &b, point &c)
+{
+	int area=a.x*(b.y-c.y) + b.x*(c.y-a.y) + c.x*(a.y-b.y);
+	return area>0;
+}
+
+vector<point> convex_hull(vector<point> &v)
+{
+	if(v.size()==1)
+		return v;
+
+	sort(v.begin(), v.end(), comp);
+
+	point p1=v[0], p2=v.back();
+
+	vector<point> up, down;
+	up.push_back(p1);
+	down.push_back(p1);
+
+	for(int i=1;i<v.size();i++)
+	{
+		if(i==v.size()-1 || cw(p1, v[i], p2))
+		{
+			while(up.size()>=2 && !cw(up[up.size()-2], up[up.size()-1], v[i]))
+				up.pop_back();
+			up.push_back(v[i]);
+		}
+		if(i==v.size()-1 || ccw(p1, v[i], p2))
+		{
+			while(down.size()>=2 && !ccw(down[down.size()-2], down[down.size()-1], v[i]))
+				down.pop_back();
+			down.push_back(v[i]);
+		}
+	}
+
+	for(int i=down.size()-2;i>0;i--)
+		up.push_back(down[i]);
+
+	return up;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+int Main(){
+
+   
+   int n , m ;
+   cin>>n>>m;
+   
+   int  coor [ n] [ 2 ] ;
+   ll tot =0 ;
+   for( int i =0; i < n ; i ++ ) {
+	   cin>>coor[ i ][ 0] >>coor[ i] [1]; 
+	   tot+= coor[ i][ 0] ; 
+   } 
+   
+  vector< point> pts ( m );
+   for ( int i =0; i < m ;i++ ) {
+	   int x, y;
+	   cin>>x>>y;
+	   pts[ i] = { x, y } ;
+	   
+   }
+   
+   vector< point > hull =convex_hull ( pts) ;
+   int nn = hull.size();
+   double resd =0.0 ;
+   
+   for( int i=0; i < hull.size(); i ++){
+	   
+	   double  xx = hull[i].x - hull[ (i + 1 )%nn].x; 
+	   double yy = hull[ i ] .y - hull[ (i+1 )%nn].y ;
+	   resd += sqrt (xx*xx+yy*yy);
+	   
+   }
+   
+   ll res = (ll)resd ;
+   if ( resd -  res >0.0) {
+	   res +=1 ;
+   }
+   //cout<<res<<endl;
+   
+   
+   
+   assert(res <= tot ) ;
+   
+   
+   ll dp[ n+1  ] [ res+ 100] ;
+   
+   for( int i =0; i <=n; i++){
+	   
+	   for( int j=0;j<=res+99;j++){
+		   if ( j==0 ){
+			   dp[ i][ j] = 0 ;
+			   continue ;
+		   }
+		   dp[ i] [ j ] = LLONG_MAX/1000;
+	   }
+	   
+   }
+   
+   
+   for( int i =1 ; i <= n; i++){
+	  
+	   
+	   for( int j =0; j <=res;j++){ 
+		   
+		   //cerr<<dp[ i ] [ min(  res  , ( ll )j+coor[ i-1 ][0]) ]<< " " ; 
+		   
+		   dp[ i ][ min(  res ,( ll) j+coor[ i-1][0]) ] = 
+		   min(dp[ i ] [ min(  res  , ( ll )j+coor[ i-1 ][0]) ],
+		   dp[ i -1 ] [ j ] +coor[ i-1 ][1]    
+		   );
+		   dp[ i] [ j] = min( dp[ i] [ j] , dp[ i-1 ][j ] ) ;
+		   //cerr<<i<<" " <<j<<" " <<dp[ i ][ min(  res ,( ll) j+coor[ i-1][0]) ]<<" "<<dp[ i -1 ] [ j ] +coor[ i-1 ][1] << endl; 
+	   }
+	   
+   }
+
+   ll ans = INT_MAX;
+   for( int i =1 ; i <=n ;i++){
+	   ans = min(ans ,(ll)dp[ i][res] );
+   }
+
+  cout<<ans<<endl;
+	
+  
+return 0;
+
+}
+
+
+
+
+
+
+int main(){
+ quick;
+
+  //#ifndef ONLINE_JUDGE
+  //freopen ("input.txt", "r", stdin);
+  //freopen ("outt.txt", "w", stdout);
+//#endif
+
+int t =1; 
+//cin>>t;
+while(t-- )
+ Main();
+
+ return 0;
+}
+
+
+  
+
+
