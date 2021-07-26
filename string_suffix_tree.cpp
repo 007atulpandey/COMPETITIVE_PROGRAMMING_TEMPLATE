@@ -1,3 +1,4 @@
+// for counting the number of unique substring in given string .. 
 #include <bits/stdc++.h>
 
 using namespace std;
