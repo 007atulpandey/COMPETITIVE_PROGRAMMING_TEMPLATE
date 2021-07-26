@@ -1,0 +1,109 @@
+// problem statement : https://www.hackerrank.com/challenges/string-function-calculation/problem
+#include<bits/stdc++.h>
+
+using namespace std;
+
+int suffixRank[20][int(1E6)];
+
+
+long long mul(long long x,long long y) {
+    return x * y;
+} 
+struct myTuple {  
+    int originalIndex;   // stores original index of suffix  
+    int firstHalf;       // store rank for first half of suffix  
+    int secondHalf;      // store rank for second half of suffix  
+};
+
+
+int cmp(myTuple a, myTuple b) {  
+    if(a.firstHalf == b.firstHalf) return a.secondHalf < b.secondHalf;  
+    else return a.firstHalf < b.firstHalf;  
+}
+
+long long largestRectangleArea(vector<int> &height) {
+        // IMPORTANT: Please reset any member data you declared, as
+        // the same Solution instance will be reused for each test case.
+        int n = height.size();
+    long long result = 0;
+        stack<int> s;
+        for (int i = 0; i < n; ++i) {
+       //printf("%d\n",height[i]);
+            while ((!s.empty()) && (height[s.top()] > height[i])) {
+                int h = height[s.top()];
+                s.pop();
+                result = max(result, mul((i  - (s.empty()?(-1):s.top())) , h));
+                
+            }
+            s.push(i);
+        }
+        while (!s.empty()) {
+            int h = height[s.top()];
+            s.pop();
+        //printf("h = %d\n",h);
+            result = max(result, mul((n  - (s.empty()?(-1):s.top())) , h));
+        }
+        return result;
+        
+    }
+
+vector<int> kasai(string s, vector<int> sa)
+{
+    int n=s.size(),k=0;
+    vector<int> lcp(n,0);
+    vector<int> rank(n,0);
+
+    for(int i=0; i<n; i++) rank[sa[i]]=i;
+
+    for(int i=0; i<n; i++, k?k--:0)
+    {
+        if(rank[i]==n-1) {k=0; continue;}
+        int j=sa[rank[i]+1];
+        while(i+k<n && j+k<n && s[i+k]==s[j+k]) k++;
+        lcp[rank[i]]=k;
+    }
+    return lcp;
+}
+
+
+
+int main() {
+
+      string s; cin >> s;
+    int N = s.size();
+
+    for(int i = 0; i < N; ++i)
+        suffixRank[0][i] = s[i] - 'a';
+
+    myTuple L[N];
+   for(int cnt = 1, stp = 1; cnt < N; cnt *= 2, ++stp) {
+
+        for(int i = 0; i < N; ++i) {
+            L[i].firstHalf = suffixRank[stp - 1][i];
+            L[i].secondHalf = i + cnt < N ? suffixRank[stp - 1][i + cnt] : -1;
+            L[i].originalIndex = i;
+        }
+
+        sort(L, L + N, cmp);
+        suffixRank[stp][L[0].originalIndex] = 0;
+
+        for(int i = 1, currRank = 0; i < N; ++i) {
+        if(L[i - 1].firstHalf != L[i].firstHalf || L[i - 1].secondHalf != L[i].secondHalf)
+                {
+                    ++currRank;
+                }
+
+            suffixRank[stp][L[i].originalIndex] = currRank;
+        }
+
+    }
+
+    vector<int  > suffix (N);
+    for(int i = 0; i < N; ++i)  suffix[i]=L[i].originalIndex;
+    vector<int > lcp(N);
+    lcp = kasai(s,suffix);
+
+    cout<<largestRectangleArea(lcp)<<endl;
+
+    return 0;
+} 
