@@ -1,4 +1,3 @@
-// problem statement : https://www.hackerrank.com/challenges/string-function-calculation/problem
 #include<bits/stdc++.h>
 
 using namespace std;
@@ -103,7 +102,7 @@ int main() {
     vector<int > lcp(N);
     lcp = kasai(s,suffix);
 
-    cout<<largestRectangleArea(lcp)<<endl;
+    cout<<max(( long long ) s.length (), ( long long  )largestRectangleArea(lcp))<<endl;
 
     return 0;
 } 
